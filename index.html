@@ -125,11 +125,98 @@ h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spa
 .loader-pct{font-family:'JetBrains Mono';font-size:11px;color:var(--text-muted);margin-top:10px}
 
 /* ============================ NAVIGATION ============================ */
-#nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px) saturate(140%);-webkit-backdrop-filter:blur(20px) saturate(140%);background:rgba(5,6,13,.55);border-bottom:1px solid var(--glass-border);transition:transform .4s var(--ease),background .3s}
-#nav.hidden{transform:translateY(-100%)}
-.nav-brand{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk';font-weight:700;font-size:18px;letter-spacing:-.02em;cursor:pointer}
-.nav-brand-mark{width:34px;height:34px;border-radius:10px;background:var(--grad-1);display:flex;align-items:center;justify-content:center;font-size:15px;color:#05060d;font-weight:700;box-shadow:var(--shadow-glow);transition:transform .4s var(--ease)}
-.nav-brand:hover .nav-brand-mark{transform:rotate(180deg) scale(1.05)}
+/* =========================================
+   1. MAIN NAVIGATION BAR (The Layout)
+   ========================================= */
+#nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 18px 32px;
+    display: flex; /* Forces items into a horizontal row */
+    align-items: center; /* Centers them vertically */
+    justify-content: space-between; /* Spreads them Left, Center, and Right */
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    background: rgba(5, 6, 13, .55);
+    border-bottom: 1px solid var(--glass-border);
+    transition: transform .4s var(--ease), background .3s;
+}
+
+#nav.hidden {
+    transform: translateY(-100%);
+}
+
+/* =========================================
+   2. BRAND & RIPPLE EFFECT
+   ========================================= */
+.nav-brand {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.nav-brand-mark {
+    width: 44px;  /* Enlarged Size */
+    height: 44px; /* Enlarged Size */
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden; 
+    box-shadow: var(--shadow-glow);
+}
+
+.mark-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+/* Stack both layers perfectly */
+.mark-front,
+.mark-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* The Bottom Layer (Black background, white logo) */
+.mark-back {
+    background: #05060d; 
+    z-index: 1;
+}
+
+/* The Top Layer (White background, black logo) */
+.mark-front {
+    background: #ffffff; /* Sets the top box to solid white */
+    z-index: 2; 
+    
+    /* Ripple Tracker Variables */
+    --x: 50%;
+    --y: 50%;
+    --radius: 0px; 
+    
+    -webkit-mask-image: radial-gradient(circle at var(--x) var(--y), transparent var(--radius), black calc(var(--radius) + 4px));
+    mask-image: radial-gradient(circle at var(--x) var(--y), transparent var(--radius), black calc(var(--radius) + 4px));
+}
+
+/* Constrain Images to fit the larger box */
+.mark-front img,
+.mark-back img {
+    width: 100%;
+    height: 100%;
+    max-width: 44px;
+    max-height: 44px;
+    object-fit: contain;
+    padding: 6px; 
+    pointer-events: none; /* Allows the mouse ripple to work smoothly */
+}
 .nav-links{display:flex;gap:6px;align-items:center}
 .nav-link{padding:8px 14px;font-size:13px;color:var(--text-soft);border-radius:10px;cursor:pointer;transition:all .25s var(--ease);font-weight:500;letter-spacing:.02em;position:relative}
 .nav-link:hover{color:var(--text);background:var(--glass)}
@@ -189,6 +276,68 @@ h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spa
 .hero-actions{display:flex;gap:12px;flex-wrap:wrap}
 .hero-visual{position:relative;height:520px;display:flex;align-items:center;justify-content:center}
 #hero-canvas{position:absolute;inset:0;width:100%;height:100%}
+/* 1. Set up the main wrapper so absolute elements (orbs, rings) stay relative to it */
+.hero-photo-wrap {
+  position: relative;
+  width: 350px; /* Adjust this to the size you want the hero image to be */
+  height: 350px; /* Keep width and height equal for a perfect circle */
+  margin: 0 auto; /* Centers it if needed */
+}
+
+/* 1. The Container (Overflow removed) */
+.hero-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%; 
+  position: relative;
+  z-index: 2; 
+  border: 4px solid #ffffff;
+  
+  /* Add this to force it to allow the breakout */
+  overflow: visible !important; 
+}
+
+/* 2. The Image */
+.hero-photo img {
+  width: 100%; 
+  height: auto; 
+  
+  /* The default starting state for the image (before scroll) */
+  transform: scale(1.35) translateY(-35%); 
+  display: block;
+
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 95%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 65%, rgba(0,0,0,0) 95%);
+  
+  /* NEW: Triggers the popIn animation when the page loads */
+  animation: popIn 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  
+  /* We remove the 0.5s transition here so it doesn't lag behind the scroll */
+}
+
+/* 3. The Page Load Animation */
+@keyframes popIn {
+  0% {
+    transform: scale(0.8) translateY(-10%); /* Starts small and lower */
+    opacity: 0; /* Starts invisible */
+  }
+  100% {
+    transform: scale(1.35) translateY(-35%); /* Ends at your perfect 3D pop-out size */
+    opacity: 1;
+  }
+}
+/* 4. Ensure your floating orbs are positioned absolutely so they can float around the image */
+.hero-orb {
+  position: absolute;
+  z-index: 3; /* Keeps the emojis on top of the image */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white; /* Optional: gives them a little bubble background */
+  border-radius: 50%;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
 .hero-photo-wrap{position:relative;width:280px;height:280px;z-index:2}
 .hero-photo{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(94,234,212,.4);box-shadow:var(--shadow-glow);background:var(--bg-elev);position:relative;z-index:2}
 .hero-photo-ring{position:absolute;inset:-20px;border:1.5px dashed rgba(94,234,212,.4);border-radius:50%;animation:spin 30s linear infinite}
@@ -196,6 +345,7 @@ h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spa
 @keyframes spin{to{transform:rotate(360deg)}}
 .hero-orb{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;backdrop-filter:blur(10px);background:var(--glass-strong);border:1px solid var(--glass-border);box-shadow:var(--shadow-glow);animation:float 6s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
 
 /* Stats strip */
 .stats-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;padding:32px clamp(20px,5vw,80px);border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);background:rgba(10,12,24,.4);backdrop-filter:blur(10px)}
@@ -922,9 +1072,19 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
 <!-- Navigation -->
 <nav id="nav">
   <div class="nav-brand" data-route="home">
-    <div class="nav-brand-mark">N</div>
-    <span>Nitin<span class="grad-text">.</span></span>
-  </div>
+    <div class="nav-brand-mark">
+      <div class="mark-inner">
+        <div class="mark-back">
+          <img src="logo_NG_white.png" alt="Logo White">
+        </div>
+        <div class="mark-front">
+          <img src="black_logo_knowme.png" alt="Logo Black">
+        </div>
+      </div>
+    </div>
+  </div> <div class="nav-links">
+    </div>
+
   <div class="nav-links" id="nav-links">
     <div class="nav-link" data-route="home">Home</div>
     <div class="nav-link" data-route="projects">Projects</div>
@@ -970,7 +1130,8 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
         <div class="hero-photo-wrap">
           <div class="hero-photo-ring"></div>
           <div class="hero-photo-ring-2"></div>
-          <div class="hero-photo" id="hero-photo">NG</div>
+          <div class="hero-photo" id="hero-photo"><img src="Nitin_Proffesional_Photo-removebg-preview.png"></div>
+          
           <div class="hero-orb" style="top:10%;left:0%;width:54px;height:54px;animation-delay:0s">🤖</div>
           <div class="hero-orb" style="top:60%;right:-5%;width:48px;height:48px;animation-delay:-2s">🎨</div>
           <div class="hero-orb" style="bottom:5%;left:10%;width:50px;height:50px;animation-delay:-4s">💻</div>
@@ -982,12 +1143,12 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
 
   <!-- Stats strip -->
   <div class="stats-strip">
-    <div class="stat"><div class="stat-num" data-count="5">0</div><div class="stat-label">Years Writing</div></div>
-    <div class="stat"><div class="stat-num" data-count="15">0</div><div class="stat-label">Projects</div></div>
-    <div class="stat"><div class="stat-num" data-count="500">0</div><div class="stat-label">Commits</div></div>
-    <div class="stat"><div class="stat-num" data-count="2">0</div><div class="stat-label">Hackathon Wins</div></div>
-    <div class="stat"><div class="stat-num" data-count="50">0</div><div class="stat-label">Articles</div></div>
-    <div class="stat"><div class="stat-num" data-count="2000">0</div><div class="stat-label">Hours Learning</div></div>
+    <div class="stat"><div class="stat-num" data-count="5">5</div><div class="stat-label">Years Writing</div></div>
+    <div class="stat"><div class="stat-num" data-count="15">15</div><div class="stat-label">Projects</div></div>
+    <div class="stat"><div class="stat-num" data-count="500">5</div><div class="stat-label">Commits</div></div>
+    <div class="stat"><div class="stat-num" data-count="2">2</div><div class="stat-label">Hackathon Wins</div></div>
+    <div class="stat"><div class="stat-num" data-count="50">2000+</div><div class="stat-label">Articles</div></div>
+    <div class="stat"><div class="stat-num" data-count="2000">5000</div><div class="stat-label">Hours Learning</div></div>
   </div>
 
   <!-- QA section -->
@@ -999,7 +1160,7 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
     <div class="qa-block">
       <div class="qa-num">01 · WHO</div>
       <div>
-        <div class="qa-q">Who is Nitin?</div>
+        <div class="qa-q">Let's Start With My Introduction</div>
         <div class="qa-a">A multi-disciplinary builder working at the intersection of AI, web, design and content. Currently pursuing a Bachelor of Computer Applications (2024–2027) at Asian School of Business, Noida, while interning at Indian Printer & Publisher as a Production Intern. Over the past 5+ years I've shipped content, design, and code across industries.</div>
         <div class="qa-tags"><span class="qa-tag">BCA · ASB Noida</span><span class="qa-tag">Production Intern · IPP</span><span class="qa-tag">5+ yrs content</span></div>
       </div>
@@ -1008,7 +1169,7 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
     <div class="qa-block">
       <div class="qa-num">02 · WHY</div>
       <div>
-        <div class="qa-q">Why should I care?</div>
+        <div class="qa-q">What Makes Me Special?</div>
         <div class="qa-a">Because most developers can code, most designers can design, and most writers can write — but very few can do all three and stitch them into a single product. I reduce the friction between teams, ship faster, and care about how a product <em>feels</em>, not just how it works.</div>
         <div class="qa-tags"><span class="qa-tag">Cross-functional</span><span class="qa-tag">Ship-ready</span><span class="qa-tag">End-to-end</span></div>
       </div>
@@ -1017,7 +1178,7 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
     <div class="qa-block">
       <div class="qa-num">03 · WHAT</div>
       <div>
-        <div class="qa-q">What problems does he solve?</div>
+        <div class="qa-q">What problems do I solve?</div>
         <div class="qa-a">I build AI-powered web applications, design intuitive user experiences, and create technical + marketing content. Recent work includes <b>MindShift</b> (AI productivity), <b>GramSetu</b> (government scheme discovery with eligibility detection + multilingual support), <b>SmartReport</b> (rural healthcare records), and <b>IPP Event Management</b> (exhibition platform).</div>
         <div class="qa-tags"><span class="qa-tag">AI Products</span><span class="qa-tag">GovTech</span><span class="qa-tag">HealthTech</span><span class="qa-tag">Web Apps</span></div>
       </div>
@@ -1026,7 +1187,7 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
     <div class="qa-block">
       <div class="qa-num">04 · DIFFERENT</div>
       <div>
-        <div class="qa-q">What makes him different?</div>
+        <div class="qa-q">What makes me different?</div>
         <div class="qa-a">A rare combination of <b>content strategy intuition</b> (5+ years of SEO, copy, scripts) and <b>engineering execution</b> (Three.js, Firebase, Gemini API, AI agents). I think like a marketer, design like a product person, and ship like a developer. Every project ships with a story — and the story is part of the product.</div>
         <div class="qa-tags"><span class="qa-tag">Story-driven</span><span class="qa-tag">Product-thinking</span><span class="qa-tag">AI-native</span></div>
       </div>
@@ -1035,7 +1196,7 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
     <div class="qa-block">
       <div class="qa-num">05 · BUILT</div>
       <div>
-        <div class="qa-q">What has he built?</div>
+        <div class="qa-q">Profects That I have been Working on</div>
         <div class="qa-a">Five flagship projects and dozens of smaller experiments — from an AI productivity platform to a healthcare system used in rural medical centers that reduced manual data entry and improved patient tracking. Each one is in the Projects world — click any hologram to enter the case study.</div>
         <div class="qa-tags"><span class="qa-tag">MindShift</span><span class="qa-tag">GramSetu</span><span class="qa-tag">SmartReport</span><span class="qa-tag">KnowMe</span><span class="qa-tag">IPP Events</span></div>
       </div>
@@ -1044,7 +1205,7 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
     <div class="qa-block">
       <div class="qa-num">06 · HIRE</div>
       <div>
-        <div class="qa-q">Should I hire him?</div>
+        <div class="qa-q">Why We Can Be The Future Parter</div>
         <div class="qa-a">If you need someone who can take a vague idea, design it, build it, write about it, and ship it — yes. I'm currently open to internships, freelance product work, and AI-focused collaborations. The Resume world has a downloadable CV, ATS version, and live timeline. The Feedback world has what previous collaborators said.</div>
         <div class="qa-tags"><span class="qa-tag">Open to internships</span><span class="qa-tag">Freelance-ready</span><span class="qa-tag">AI collabs</span></div>
       </div>
@@ -4133,17 +4294,21 @@ console.log('%c👋 Hey, curious developer.', 'color:#a78bfa;font-size:14px;font
 console.log('%cYou found the console. Nice. Here are some secrets:\n\n  • Try the Konami code: ↑↑↓↓←→←→ B A\n  • Click the brand logo 7 times\n  • Type "nitin" anywhere on the home page\n  • Hover every section label\n  • Open the AI Playground and ask about "secrets"\n\nIf you\'re a recruiter — yes, this is intentional. Built by Nitin Goswami.', 'color:#b6bdcf;font-size:12px;line-height:1.6');
 
 // brand click easter egg
-let brandClicks = 0, brandTimer=null;
-$('.nav-brand').addEventListener('click', ()=>{
-  brandClicks++;
-  clearTimeout(brandTimer);
-  brandTimer = setTimeout(()=>brandClicks=0, 1500);
-  if(brandClicks === 7){
-    unlockAchievement('brand7', '🖱 Lucky Seven', 'Clicked the logo 7 times');
-    toast('🎯 7 clicks. You\'re curious. I like that.','success', 4000);
-    // spawn floating easter egg
-    spawnFloatingEgg();
-  }
+// Using querySelector to safely grab the container
+const brandElement = document.querySelector('.nav-brand');
+
+brandElement.addEventListener('click', () => {
+    brandClicks++;
+    
+    // Optional: Add a tiny pop animation on click
+    const innerMark = document.querySelector('.mark-inner');
+    innerMark.style.transform = 'scale(0.9)';
+    setTimeout(() => innerMark.style.transform = '', 150);
+
+    if (brandClicks === 7) {
+        unlockAchievement('Eagle Eye');
+        spawnFloatingEgg();
+    }
 });
 
 function spawnFloatingEgg(){
@@ -4234,8 +4399,63 @@ if(document.readyState === 'loading'){
   init();
 }
 
-// expose for debugging
-window.NG = { PROJECTS, SKILLS, navigate, achievements, toast };
+const logoContainer = document.querySelector('.nav-brand-mark');
+const topLogo = document.querySelector('.mark-front');
+
+// Track mouse movement to move the ripple
+logoContainer.addEventListener('mousemove', (e) => {
+    // Get the exact coordinates inside the 34x34 box
+    const rect = logoContainer.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Update the CSS variables
+    topLogo.style.setProperty('--x', `${x}px`);
+    topLogo.style.setProperty('--y', `${y}px`);
+    
+    // Set the size of the reveal hole (18px works well for a 34px box)
+    topLogo.style.setProperty('--radius', '18px'); 
+});
+
+// Hide the ripple smoothly when the mouse leaves
+logoContainer.addEventListener('mouseleave', () => {
+    topLogo.style.setProperty('--radius', '0px');
+});
+
+// Your 7-click easter egg logic
+let brandClicks = 0;
+logoContainer.addEventListener('click', () => {
+    brandClicks++;
+    if (brandClicks === 7) {
+        // unlockAchievement('Eagle Eye');
+        // spawnFloatingEgg();
+    }
+});
+// Wait for the page to fully load
+  document.addEventListener("DOMContentLoaded", () => {
+    
+    const heroImage = document.querySelector('.hero-photo img');
+    
+    window.addEventListener('scroll', () => {
+      
+      // THE FIX: This removes the CSS animation lock so JS can take control
+      if (heroImage) {
+        heroImage.style.animation = 'none';
+      }
+      
+      const scrollPosition = window.scrollY;
+      const maxScroll = 400; 
+      
+      let scrollFraction = scrollPosition / maxScroll;
+      if (scrollFraction > 1) scrollFraction = 1; 
+      
+      const currentScale = 1.35 - (0.35 * scrollFraction);
+      const currentTranslate = -35 + (25 * scrollFraction);
+      
+      heroImage.style.transform = `scale(${currentScale}) translateY(${currentTranslate}%)`;
+    });
+  });
+
 </script>
 
 </body>
