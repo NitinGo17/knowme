@@ -23,6 +23,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
 
 <!-- Markdown + syntax highlight -->
 <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
@@ -338,14 +339,11 @@ h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spa
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
 }
 
-.hero-photo-wrap{position:relative;width:280px;height:280px;z-index:2}
-.hero-photo{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid rgba(94,234,212,.4);box-shadow:var(--shadow-glow);background:var(--bg-elev);position:relative;z-index:2}
+/* Decorative rings around hero photo */
 .hero-photo-ring{position:absolute;inset:-20px;border:1.5px dashed rgba(94,234,212,.4);border-radius:50%;animation:spin 30s linear infinite}
 .hero-photo-ring-2{position:absolute;inset:-40px;border:1px solid rgba(167,139,250,.2);border-radius:50%;animation:spin 50s linear infinite reverse}
 @keyframes spin{to{transform:rotate(360deg)}}
-.hero-orb{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;backdrop-filter:blur(10px);background:var(--glass-strong);border:1px solid var(--glass-border);box-shadow:var(--shadow-glow);animation:float 6s ease-in-out infinite}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-
 
 /* Stats strip */
 .stats-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;padding:32px clamp(20px,5vw,80px);border-top:1px solid var(--glass-border);border-bottom:1px solid var(--glass-border);background:rgba(10,12,24,.4);backdrop-filter:blur(10px)}
@@ -363,63 +361,7 @@ h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spa
 .qa-tag{padding:5px 10px;border-radius:6px;background:rgba(94,234,212,.08);border:1px solid rgba(94,234,212,.18);font-size:11px;font-family:'JetBrains Mono';color:var(--cyan)}
 
 /* Interactive map */
-:root{
-      --bg:#000000;
-      --surface:#05060d;
-      --text:#f3f4f6;
-      --muted:#9ca3af;
-      --cyan:#5eead4;
-      --purple:#a78bfa;
-      --blue:#60a5fa;
-      --pink:#f472b6;
-      --glass:rgba(15,18,28,.72);
-      --border:rgba(255,255,255,.10);
-      --radius:22px;
-      --ease:cubic-bezier(.22,1,.36,1);
-    }
-
     *{box-sizing:border-box}
-    body{
-      margin:0;
-      background:#000;
-      color:var(--text);
-      font-family:"Space Grotesk",system-ui,sans-serif;
-      padding:32px 20px;
-    }
-
-    .section{
-      max-width:1100px;
-      margin:0 auto;
-    }
-
-    .section-label{
-      font-size:12px;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      color:var(--cyan);
-      margin-bottom:10px;
-    }
-
-    .section-title{
-      font-size:clamp(32px,4vw,54px);
-      line-height:1.02;
-      margin:0 0 12px;
-      font-weight:700;
-    }
-
-    .grad-text-3{
-      background:linear-gradient(90deg,var(--blue),var(--cyan));
-      -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent;
-      background-clip:text;
-      color:transparent;
-    }
-
-    .section-sub{
-      margin:0 0 26px;
-      color:var(--muted);
-      font-size:clamp(15px,1.6vw,20px);
-    }
 
     .map-wrap{
       position:relative;
@@ -788,12 +730,19 @@ h1,h2,h3,h4,h5{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spa
 
 /* CV print mode */
 body.cv-print{background:#fff;color:#000}
-body.cv-print #nav,body.cv-print #bg-canvas,body.cv-print .aurora,body.cv-print .stars,body.cv-print .cursor-dot,body.cv-print .cursor-ring,body.cv-print #loader,body.cv-print .cv-sidebar{display:none}
-body.cv-print .page{position:static;opacity:1;visibility:visible;transform:none;padding:0}
+body.cv-print #nav,body.cv-print #bg-canvas,body.cv-print .aurora,body.cv-print .stars,body.cv-print .cursor-dot,body.cv-print .cursor-ring,body.cv-print #loader,body.cv-print .cv-sidebar,body.cv-print #footer,body.cv-print .project-detail,body.cv-print .editor-overlay,body.cv-print .modal-overlay,body.cv-print #toast-container,body.cv-print .achievement,body.cv-print .konami-flash{display:none!important}
+body.cv-print .page{position:static;opacity:1;visibility:visible;transform:none;padding:0;display:block!important}
 body.cv-print .cv-layout{grid-template-columns:1fr}
-body.cv-print .glass{background:#fff;border:1px solid #ccc;box-shadow:none;backdrop-filter:none}
+body.cv-print .glass{background:#fff;border:1px solid #ccc;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
 body.cv-print .cv-tl-date,body.cv-print .section-label,body.cv-print .cv-tl-item::before{color:#000}
-body.cv-print .grad-text,body.cv-print .grad-text-2,body.cv-print .grad-text-3{-webkit-text-fill-color:#000}
+body.cv-print .grad-text,body.cv-print .grad-text-2,body.cv-print .grad-text-3{-webkit-text-fill-color:#000;color:#000}
+body.cv-print .cv-skill-level{display:none}
+body.cv-print .cv-skill{border:1px solid #999;background:#fff}
+body.cv-print .section-title,body.cv-print h2,body.cv-print h3{color:#000}
+body.cv-print .section-sub,body.cv-print .cv-tl-desc,body.cv-print .cv-tl-org{color:#333}
+body.cv-print .cv-timeline::before{background:#999}
+body.cv-print .cv-achieve{border:1px solid #ccc}
+@page{margin:1.5cm}
 
 /* ATS mode */
 body.ats-mode .glass{background:#fff;color:#000;border:1px solid #ccc}
@@ -1042,6 +991,182 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
 .hidden{display:none!important}
 .spin{animation:spin 1s linear infinite}
 
+/* ============================ RESUME CENTER ============================ */
+.resume-info-grid{display:grid;grid-template-columns:300px 1fr;gap:24px;margin-bottom:32px}
+@media(max-width:768px){.resume-info-grid{grid-template-columns:1fr}}
+.resume-info-card{padding:28px;text-align:center}
+.resume-info-card .cv-photo{width:80px;height:80px;font-size:32px;margin:0 auto 14px}
+.resume-info-card .cv-name{font-size:20px;font-weight:600;margin-bottom:4px}
+.resume-info-card .cv-role{font-size:11px;color:var(--text-muted);font-family:'JetBrains Mono';margin-bottom:18px;line-height:1.5}
+.resume-contact-row{font-size:13px;color:var(--text-soft);margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px}
+.resume-contact-row a{color:var(--cyan);text-decoration:none}
+.resume-stats-card{padding:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-content:center}
+@media(max-width:480px){.resume-stats-card{grid-template-columns:repeat(2,1fr)}}
+.resume-stat{text-align:center}
+.resume-stat b{display:block;font-size:clamp(24px,3vw,36px);font-weight:700;font-family:'Space Grotesk';background:var(--grad-1);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.resume-stat span{font-size:10px;color:var(--text-muted);letter-spacing:.1em;text-transform:uppercase;margin-top:4px;display:block}
+
+.resume-download-center{padding:28px;margin-bottom:32px}
+.resume-options-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:24px}
+@media(max-width:768px){.resume-options-grid{grid-template-columns:1fr;gap:16px}}
+.resume-option-label{display:block;font-size:12px;font-family:'JetBrains Mono';color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.resume-choice-list{display:flex;flex-direction:column;gap:8px}
+.resume-choice{padding:12px 14px;border-radius:12px;background:var(--glass);border:1px solid var(--glass-border);color:var(--text-soft);cursor:pointer;transition:all .25s var(--ease);text-align:left;font-family:inherit;font-size:13px;font-weight:500}
+.resume-choice:hover{background:var(--glass-strong);border-color:rgba(94,234,212,.3)}
+.resume-choice.active{background:rgba(94,234,212,.1);border-color:var(--cyan);color:var(--cyan)}
+.resume-choice-desc{display:block;font-size:11px;color:var(--text-muted);margin-top:2px;font-weight:400}
+.resume-choice.active .resume-choice-desc{color:var(--text-soft)}
+.resume-download-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+.resume-preview-wrap{padding:24px;margin-bottom:32px;max-height:600px;overflow:hidden;display:flex;flex-direction:column}
+.resume-preview-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-shrink:0}
+.resume-preview-scroll{overflow-y:auto;flex:1;background:#fff;border-radius:12px;padding:8px}
+.resume-preview-scroll .rdoc{background:#fff}
+
+.cover-letter-section{padding:28px;margin-bottom:32px}
+.cover-letter-form{margin-bottom:16px}
+.cover-letter-form .editor-row{margin-bottom:12px}
+.cover-letter-preview-wrap{max-height:600px;overflow:hidden;display:flex;flex-direction:column}
+.cover-letter-content{font-family:'Inter',sans-serif;color:#111;background:#fff;border-radius:12px;padding:8px}
+.cover-letter-content .cl-doc{padding:20px}
+
+/* Resume document styles (for in-page preview) */
+.rdoc{background:#fff;color:#111}
+.rdoc a{color:#2563eb}
+
+/* ============================ RESPONSIVE / MOBILE ============================ */
+@media (max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;gap:32px}
+  .hero-visual{height:380px}
+  .hero-photo-wrap{width:260px;height:260px}
+  .pd-grid-2{grid-template-columns:1fr}
+  .editor-row{grid-template-columns:1fr}
+  .feedback-layout{grid-template-columns:1fr}
+  .blog-layout{grid-template-columns:1fr}
+  .cv-layout{grid-template-columns:1fr}
+  .cv-sidebar{position:static;top:auto}
+  .blog-sidebar{position:static;top:auto}
+}
+
+@media (max-width:768px){
+  #nav{padding:14px 16px}
+  .nav-cta{display:none}
+  .hero{padding:100px 16px 60px}
+  .hero-title{font-size:clamp(32px,8vw,52px)}
+  .hero-visual{height:320px}
+  .hero-photo-wrap{width:220px;height:220px}
+  .section{padding:60px 16px}
+  .section-title{font-size:clamp(26px,6vw,40px)}
+  .section-sub{font-size:14px}
+  .qa-block{grid-template-columns:1fr;gap:10px}
+  .stats-strip{grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:10px;padding:20px 16px}
+  .stat-num{font-size:clamp(22px,5vw,32px)}
+  .projects-grid{grid-template-columns:1fr;gap:16px}
+  .project-card{min-height:auto;padding:22px}
+  .pd-hero{min-height:60vh;padding:60px 16px 40px}
+  .pd-body{padding:40px 16px}
+  .pd-grid-2{grid-template-columns:1fr}
+  .pd-section{margin-bottom:48px}
+  .pd-title{font-size:clamp(28px,7vw,48px)}
+  .blog-grid{grid-template-columns:1fr}
+  .blog-card{min-height:auto}
+  .blog-post{padding:40px 16px}
+  .blog-post-content{font-size:15px}
+  #galaxy-canvas{height:440px}
+  .galaxy-info{top:12px;left:12px;right:12px;width:auto;padding:12px 14px}
+  .galaxy-legend{left:12px;right:12px;bottom:12px}
+  .galaxy-legend-item{padding:6px 8px;font-size:10px}
+  .ai-chat{height:460px}
+  .ai-msg{max-width:90%;font-size:13px}
+  .ai-input-row input{font-size:13px}
+  .feedback-layout{grid-template-columns:1fr}
+  .bottles-stage{height:360px}
+  .feedback-form{padding:20px}
+  .analytics-grid{grid-template-columns:1fr}
+  .radar-wrap{max-width:280px}
+  .wall-grid{grid-template-columns:1fr}
+  .cv-layout{grid-template-columns:1fr}
+  .cv-sidebar{position:static;top:auto}
+  .cv-download-card{padding:20px}
+  .cv-photo{width:90px;height:90px;font-size:36px}
+  .cv-achieve-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+  .lab-grid{grid-template-columns:1fr}
+  .bts-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+  .testimonial-grid{grid-template-columns:1fr}
+  .contact-orbit{width:min(360px,85vw);height:min(360px,85vw)}
+  .contact-direct{gap:8px}
+  .contact-direct a{font-size:11px;padding:8px 12px}
+  .modal{padding:24px 20px}
+  .modal h3{font-size:18px}
+  .arch-flow{flex-direction:column}
+  .arch-arrow{transform:rotate(90deg)}
+  .arch-node{min-width:auto;width:100%}
+  .device-mockup{max-width:100%}
+  .device-phone{right:-10px;bottom:-10px;width:90px}
+  .screenshot-row{grid-template-columns:1fr 1fr}
+  .voice-bar{padding:14px}
+  .voice-info b{font-size:12px}
+  .voice-info span{font-size:10px}
+  #footer{padding:30px 16px;font-size:11px}
+  #footer .nav-link{font-size:10px;padding:4px 8px}
+}
+
+@media (max-width:480px){
+  .hero-title{font-size:clamp(26px,9vw,38px)}
+  .hero-desc{font-size:14px}
+  .hero-orb{display:none}
+  .hero-photo-wrap{width:180px;height:180px}
+  .section-title{font-size:clamp(22px,7vw,32px)}
+  .section-label{font-size:10px;padding:4px 10px}
+  .nav-brand-mark{width:36px;height:36px}
+  .stat-num{font-size:clamp(20px,6vw,28px)}
+  .stat-label{font-size:9px}
+  .projects-grid{grid-template-columns:1fr}
+  .project-card{padding:18px}
+  .project-icon{width:44px;height:44px;font-size:22px}
+  .blog-card{padding:18px}
+  .blog-card-title{font-size:17px}
+  .big-stat-num{font-size:clamp(32px,8vw,44px)}
+  .cv-achieve-grid{grid-template-columns:1fr}
+  .screenshot-row{grid-template-columns:1fr}
+  .contact-direct{flex-direction:column;align-items:center}
+  .contact-direct a{width:100%;text-align:center}
+  .toast{min-width:200px;font-size:12px;padding:10px 14px}
+  #toast-container{bottom:16px;right:16px;left:16px}
+}
+
+/* Touch device adjustments */
+@media (hover:none) and (pointer:coarse){
+  .cursor-dot,.cursor-ring{display:none!important}
+  body{cursor:auto}
+  .project-card:hover,.blog-card:hover,.lab-card:hover,.glass-hover:hover{transform:none}
+  .project-card:hover .project-icon{transform:none}
+  .nav-link:hover{background:transparent}
+}
+
+/* Tablet adjustments */
+@media (min-width:769px) and (max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  .projects-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .blog-grid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .cv-layout{grid-template-columns:240px 1fr}
+  .feedback-layout{grid-template-columns:1fr}
+  .lab-grid{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+}
+
+/* Prevent horizontal overflow on all viewports */
+html,body{overflow-x:hidden;max-width:100vw}
+.page{max-width:100vw}
+img{max-width:100%;height:auto}
+pre{max-width:100%;overflow-x:auto}
+
+/* Ensure inputs are properly sized on mobile */
+input,textarea,button{font-size:16px}
+@media (min-width:768px){
+  input,textarea,button{font-size:inherit}
+}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
@@ -1082,10 +1207,7 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
         </div>
       </div>
     </div>
-  </div> <div class="nav-links">
-    </div>
-
-  <div class="nav-links" id="nav-links">
+  </div> <div class="nav-links" id="nav-links">
     <div class="nav-link" data-route="home">Home</div>
     <div class="nav-link" data-route="projects">Projects</div>
     <div class="nav-link" data-route="skills">Skills</div>
@@ -1143,12 +1265,12 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
 
   <!-- Stats strip -->
   <div class="stats-strip">
-    <div class="stat"><div class="stat-num" data-count="5">5</div><div class="stat-label">Years Writing</div></div>
-    <div class="stat"><div class="stat-num" data-count="15">15</div><div class="stat-label">Projects</div></div>
-    <div class="stat"><div class="stat-num" data-count="500">5</div><div class="stat-label">Commits</div></div>
-    <div class="stat"><div class="stat-num" data-count="2">2</div><div class="stat-label">Hackathon Wins</div></div>
-    <div class="stat"><div class="stat-num" data-count="50">2000+</div><div class="stat-label">Articles</div></div>
-    <div class="stat"><div class="stat-num" data-count="2000">5000</div><div class="stat-label">Hours Learning</div></div>
+    <div class="stat"><div class="stat-num" data-count="5">0</div><div class="stat-label">Years Writing</div></div>
+    <div class="stat"><div class="stat-num" data-count="15">0</div><div class="stat-label">Projects</div></div>
+    <div class="stat"><div class="stat-num" data-count="500">0</div><div class="stat-label">Commits</div></div>
+    <div class="stat"><div class="stat-num" data-count="2">0</div><div class="stat-label">Hackathon Wins</div></div>
+    <div class="stat"><div class="stat-num" data-count="50">0</div><div class="stat-label">Articles</div></div>
+    <div class="stat"><div class="stat-num" data-count="2000">0</div><div class="stat-label">Hours Learning</div></div>
   </div>
 
   <!-- QA section -->
@@ -1196,7 +1318,7 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
     <div class="qa-block">
       <div class="qa-num">05 · BUILT</div>
       <div>
-        <div class="qa-q">Profects That I have been Working on</div>
+        <div class="qa-q">Projects That I Have Been Working On</div>
         <div class="qa-a">Five flagship projects and dozens of smaller experiments — from an AI productivity platform to a healthcare system used in rural medical centers that reduced manual data entry and improved patient tracking. Each one is in the Projects world — click any hologram to enter the case study.</div>
         <div class="qa-tags"><span class="qa-tag">MindShift</span><span class="qa-tag">GramSetu</span><span class="qa-tag">SmartReport</span><span class="qa-tag">KnowMe</span><span class="qa-tag">IPP Events</span></div>
       </div>
@@ -1205,7 +1327,7 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
     <div class="qa-block">
       <div class="qa-num">06 · HIRE</div>
       <div>
-        <div class="qa-q">Why We Can Be The Future Parter</div>
+        <div class="qa-q">Why We Can Be The Future Partner</div>
         <div class="qa-a">If you need someone who can take a vague idea, design it, build it, write about it, and ship it — yes. I'm currently open to internships, freelance product work, and AI-focused collaborations. The Resume world has a downloadable CV, ATS version, and live timeline. The Feedback world has what previous collaborators said.</div>
         <div class="qa-tags"><span class="qa-tag">Open to internships</span><span class="qa-tag">Freelance-ready</span><span class="qa-tag">AI collabs</span></div>
       </div>
@@ -1358,83 +1480,107 @@ body.ats-mode #bg-canvas,body.ats-mode .aurora,body.ats-mode .stars{opacity:.1}
 <!-- ============== CV / RESUME PAGE ============== -->
 <section class="page" data-page="cv">
   <div class="section">
-    <div class="section-label">Resume</div>
-    <h2 class="section-title">A digital <span class="grad-text-3">CV.</span></h2>
-    <p class="section-sub">Not a PDF download button. A timeline, interactive skills, achievements, certificates — plus a print mode and an ATS-friendly toggle for recruiters who need plain text.</p>
+    <div class="section-label">Resume Center</div>
+    <h2 class="section-title">Download or <span class="grad-text-3">customize.</span></h2>
+    <p class="section-sub">Preview, pick a style, choose masked or unmasked, and download as PDF or Word. Need a cover letter? Generate one tailored to the job you're applying for.</p>
 
-    <div class="cv-layout">
-      <aside class="cv-sidebar">
-        <div class="cv-download-card glass">
-          <div class="cv-photo">NG</div>
-          <div class="cv-name">Nitin Goswami</div>
-          <div class="cv-role">AI · WEB · DESIGN · CONTENT</div>
-          <div class="cv-actions">
-            <button class="cv-btn primary" id="cv-download">⬇ Download PDF</button>
-            <button class="cv-btn" id="cv-print">🖨 Print Mode</button>
-            <button class="cv-btn" id="cv-ats">📄 ATS Version</button>
-          </div>
-          <div class="cv-mode-toggle">
-            <button class="active" data-cv-mode="visual">Visual</button>
-            <button data-cv-mode="ats">ATS</button>
-          </div>
-        </div>
-      </aside>
+    <!-- Info preview -->
+    <div class="resume-info-grid" id="resume-info-preview">
+      <div class="resume-info-card glass">
+        <div class="cv-photo">NG</div>
+        <div class="cv-name">Nitin Goswami</div>
+        <div class="cv-role">AI Developer · Web Developer · UI Designer · Content Strategist</div>
+        <div class="resume-contact-row"><span>📧</span> <span id="rc-email">nitin.goswami.office@gmail.com</span></div>
+        <div class="resume-contact-row"><span>📱</span> <span id="rc-phone">+91 98XXX XXXXX</span></div>
+        <div class="resume-contact-row"><span>📍</span> <span id="rc-address">Noida, Uttar Pradesh, India</span></div>
+        <div class="resume-contact-row"><span>🔗</span> <a href="https://www.linkedin.com/in/nitin-goswami-7a229326b/" target="_blank" rel="noopener">LinkedIn</a> · <a href="https://github.com/NitinGo17" target="_blank" rel="noopener">GitHub</a></div>
+      </div>
+      <div class="resume-stats-card glass">
+        <div class="resume-stat"><b>5+</b><span>Years Writing</span></div>
+        <div class="resume-stat"><b>15+</b><span>Projects</span></div>
+        <div class="resume-stat"><b>2</b><span>Hackathon Wins</span></div>
+        <div class="resume-stat"><b>50+</b><span>Articles</span></div>
+        <div class="resume-stat"><b>5+</b><span>Years Content</span></div>
+        <div class="resume-stat"><b>BCA</b><span>2024-2027</span></div>
+      </div>
+    </div>
 
-      <div>
-        <div style="margin-bottom:48px">
-          <div class="section-label">Experience</div>
-          <div class="cv-timeline">
-            <div class="cv-tl-item">
-              <div class="cv-tl-date">MAY 2026 — PRESENT</div>
-              <div class="cv-tl-role">Production Intern</div>
-              <div class="cv-tl-org">Indian Printer & Publisher</div>
-              <div class="cv-tl-desc">Website development, WordPress, EDM design, magazine design, social media creatives.</div>
-            </div>
-            <div class="cv-tl-item">
-              <div class="cv-tl-date">2021 — PRESENT</div>
-              <div class="cv-tl-role">Freelance Content Strategist & Writer</div>
-              <div class="cv-tl-org">Self-employed · Multi-industry</div>
-              <div class="cv-tl-desc">Technical blogs, SEO articles, website content, landing pages, LinkedIn, Instagram, Reels & YouTube scripts, product descriptions, marketing copy, news articles, transcription, content strategy.</div>
-            </div>
-            <div class="cv-tl-item">
-              <div class="cv-tl-date">2024 — 2027</div>
-              <div class="cv-tl-role">Bachelor of Computer Applications</div>
-              <div class="cv-tl-org">Asian School of Business, Noida</div>
-              <div class="cv-tl-desc">Formal CS education alongside ongoing industry work.</div>
-            </div>
+    <!-- Download options -->
+    <div class="resume-download-center glass" id="resume-download-center">
+      <h3 style="font-size:20px;margin-bottom:20px">📄 Resume Download Options</h3>
+      <div class="resume-options-grid">
+        <div class="resume-option-group">
+          <label class="resume-option-label">1. Choose Style</label>
+          <div class="resume-choice-list" id="resume-style-choices">
+            <button class="resume-choice active" data-style="minimal">Minimal<div class="resume-choice-desc">Single column, clean</div></button>
+            <button class="resume-choice" data-style="modern">Modern<div class="resume-choice-desc">Two-column with sidebar</div></button>
+            <button class="resume-choice" data-style="classic">Classic<div class="resume-choice-desc">Traditional, serif</div></button>
           </div>
         </div>
-
-        <div style="margin-bottom:48px">
-          <div class="section-label">Skills · Interactive</div>
-          <h3 style="font-size:22px;margin-bottom:18px">Hover to reveal proficiency</h3>
-          <div class="cv-skills-cloud" id="cv-skills-cloud"></div>
-        </div>
-
-        <div style="margin-bottom:48px">
-          <div class="section-label">Achievements</div>
-          <h3 style="font-size:22px;margin-bottom:18px">Wins & participations</h3>
-          <div class="cv-achieve-grid">
-            <div class="cv-achieve"><div class="cv-achieve-icon">🥈</div><div class="cv-achieve-title">2nd Rank</div><div class="cv-achieve-sub">Delhi University Hackathon</div></div>
-            <div class="cv-achieve"><div class="cv-achieve-icon">🏅</div><div class="cv-achieve-title">Top 10</div><div class="cv-achieve-sub">Technofusion 1.0</div></div>
-            <div class="cv-achieve"><div class="cv-achieve-icon">💡</div><div class="cv-achieve-title">Participant</div><div class="cv-achieve-sub">Ideathon 7.0</div></div>
-            <div class="cv-achieve"><div class="cv-achieve-icon">🎯</div><div class="cv-achieve-title">Participant</div><div class="cv-achieve-sub">ASBIC 2024</div></div>
-            <div class="cv-achieve"><div class="cv-achieve-icon">⚖️</div><div class="cv-achieve-title">Participant</div><div class="cv-achieve-sub">CaseCraft 1.0</div></div>
-            <div class="cv-achieve"><div class="cv-achieve-icon">📊</div><div class="cv-achieve-title">Participant</div><div class="cv-achieve-sub">Budget Conclave</div></div>
-            <div class="cv-achieve"><div class="cv-achieve-icon">🎭</div><div class="cv-achieve-title">Participant</div><div class="cv-achieve-sub">Nukkad Natak</div></div>
+        <div class="resume-option-group">
+          <label class="resume-option-label">2. Contact Details</label>
+          <div class="resume-choice-list" id="resume-mask-choices">
+            <button class="resume-choice active" data-mask="false">Unmasked<div class="resume-choice-desc">Full contact info visible</div></button>
+            <button class="resume-choice" data-mask="true">Masked<div class="resume-choice-desc">Phone, email & address hidden</div></button>
           </div>
         </div>
-
-        <div>
-          <div class="section-label">Certifications & Learning</div>
-          <h3 style="font-size:22px;margin-bottom:18px">Currently exploring</h3>
-          <div class="cv-skills-cloud">
-            <div class="cv-skill">AI Agents<span class="cv-skill-level">60</span></div>
-            <div class="cv-skill">Three.js<span class="cv-skill-level">55</span></div>
-            <div class="cv-skill">System Design<span class="cv-skill-level">45</span></div>
-            <div class="cv-skill">Full Stack<span class="cv-skill-level">65</span></div>
-            <div class="cv-skill">Modern UI<span class="cv-skill-level">60</span></div>
+        <div class="resume-option-group">
+          <label class="resume-option-label">3. Format</label>
+          <div class="resume-choice-list" id="resume-format-choices">
+            <button class="resume-choice active" data-format="pdf">PDF<div class="resume-choice-desc">Print-ready, universal</div></button>
+            <button class="resume-choice" data-format="word">Word (.docx)<div class="resume-choice-desc">Editable document</div></button>
           </div>
+        </div>
+      </div>
+      <div class="resume-download-actions">
+        <button class="btn btn-primary" id="resume-download-btn">⬇ Download Resume</button>
+        <button class="btn btn-ghost" id="resume-preview-btn">👁 Preview</button>
+      </div>
+    </div>
+
+    <!-- Preview area -->
+    <div class="resume-preview-wrap glass" id="resume-preview-wrap" style="display:none">
+      <div class="resume-preview-header">
+        <h3 style="font-size:18px">Resume Preview</h3>
+        <button class="btn btn-ghost" id="resume-close-preview">✕ Close</button>
+      </div>
+      <div class="resume-preview-scroll">
+        <div id="resume-preview-content"></div>
+      </div>
+    </div>
+
+    <!-- Cover Letter Generator -->
+    <div class="cover-letter-section glass" id="cover-letter-section">
+      <h3 style="font-size:20px;margin-bottom:8px">✉ Cover Letter Generator</h3>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px">Enter the job details and generate a tailored cover letter. Download as PDF or Word.</p>
+      <div class="cover-letter-form">
+        <div class="editor-row">
+          <input class="editor-input" type="text" id="cl-company" placeholder="Company name (e.g. Google, TCS)" />
+          <input class="editor-input" type="text" id="cl-position" placeholder="Position (e.g. AI Developer Intern)" />
+        </div>
+        <div class="editor-row">
+          <input class="editor-input" type="text" id="cl-manager" placeholder="Hiring manager name (optional)" />
+          <select class="editor-input" id="cl-tone">
+            <option value="professional">Professional tone</option>
+            <option value="enthusiastic">Enthusiastic tone</option>
+            <option value="concise">Concise tone</option>
+          </select>
+        </div>
+        <textarea class="editor-input" id="cl-jobdesc" placeholder="Paste the job description or key requirements here (optional — helps tailor the letter)..." style="min-height:80px;resize:vertical"></textarea>
+        <div class="resume-download-actions">
+          <button class="btn btn-primary" id="cl-generate-btn">✍ Generate Cover Letter</button>
+        </div>
+      </div>
+      <div class="cover-letter-preview-wrap" id="cover-letter-preview-wrap" style="display:none">
+        <div class="resume-preview-header" style="margin-top:24px">
+          <h3 style="font-size:16px">Generated Cover Letter</h3>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-ghost" id="cl-download-pdf">⬇ PDF</button>
+            <button class="btn btn-ghost" id="cl-download-word">⬇ Word</button>
+          </div>
+        </div>
+        <div class="resume-preview-scroll">
+          <div id="cover-letter-preview-content" class="cover-letter-content"></div>
         </div>
       </div>
     </div>
@@ -2240,26 +2386,6 @@ const categories = {
   resize();
   window.addEventListener('resize', resize);
   animate();
-
-  const infoBlock = {
-  x: 20,
-  y: 20,
-  w: Math.min(280, w - 40),
-  h: 130
-};
-
-const insideInfo =
-  n.x + n.r > infoBlock.x &&
-  n.x - n.r < infoBlock.x + infoBlock.w &&
-  n.y + n.r > infoBlock.y &&
-  n.y - n.r < infoBlock.y + infoBlock.h;
-
-if (insideInfo) {
-  const pushX = (n.x < infoBlock.x + infoBlock.w / 2) ? -1 : 1;
-  const pushY = (n.y < infoBlock.y + infoBlock.h / 2) ? -1 : 1;
-  n.vx += pushX * 0.6;
-  n.vy += pushY * 0.6;
-}
 });
 const CAT_COLORS={languages:'#5eead4',frontend:'#60a5fa',backend:'#a78bfa',ai:'#f472b6',design:'#fbbf24',tools:'#34d399'};
 const CAT_LABELS={languages:'Languages',frontend:'Frontend',backend:'Backend & DB',ai:'AI',design:'Design',tools:'Tools'};
@@ -2762,7 +2888,7 @@ function animateStatsIn(scope){
       const t = Math.min(1, (now-start)/dur);
       const eased = 1 - Math.pow(1-t, 3);
       const val = Math.floor(target * eased);
-      el.textContent = val + (target >= 1000 ? '+' : target >= 100 ? '+' : '');
+      el.textContent = val + (target >= 100 ? '+' : '');
       if(t < 1) requestAnimationFrame(tick);
       else el.textContent = target + (target >= 100 ? '+' : '');
     }
@@ -3194,7 +3320,7 @@ function setupPrototype(p){
 }
 
 function closeProjectDetail(){
-  if(currentUtterance) speechSynthesis.cancel();
+  if(currentUtterance && 'speechSynthesis' in window) speechSynthesis.cancel();
   $('#project-detail').classList.remove('active');
   document.body.classList.remove('no-scroll');
 }
@@ -3428,7 +3554,14 @@ function submitFeedback(e){
   if(!overall){ toast('Please rate at least the Overall Experience','warn'); return; }
   const item = { id:'fb-'+Date.now(), name, message, ratings, date:Date.now() };
   feedbackState.items.push(item);
-  saveFeedbackLocal(item);
+  if(FB_ENABLED && fbDb){
+    fbDb.collection('feedback').doc(item.id).set(item).catch(err=>{
+      console.warn('Firestore save failed, using local:', err);
+      saveFeedbackLocal(item);
+    });
+  } else {
+    saveFeedbackLocal(item);
+  }
   $('#fb-name').value = '';
   $('#fb-message').value = '';
   // reset stars
@@ -3442,6 +3575,26 @@ function submitFeedback(e){
 }
 
 function loadFeedbackLocal(){
+  if(FB_ENABLED && fbDb){
+    fbDb.collection('feedback').orderBy('date','desc').onSnapshot(snap=>{
+      feedbackState.items = snap.docs.map(d=>d.data());
+      $('#bottle-count').textContent = feedbackState.items.length;
+      // re-render if on feedback page
+      if(currentRoute === 'feedback'){
+        renderFeedbackWall();
+        drawRadar();
+        drawBarChart();
+      }
+    }, err=>{
+      console.warn('Firestore feedback listen failed, falling back:', err);
+      loadFeedbackFromLocal();
+    });
+  } else {
+    loadFeedbackFromLocal();
+  }
+}
+
+function loadFeedbackFromLocal(){
   try{
     const data = JSON.parse(localStorage.getItem('ng_feedback') || '[]');
     feedbackState.items = data;
@@ -3459,7 +3612,6 @@ function loadFeedbackLocal(){
 }
 
 function saveFeedbackLocal(item){
-  feedbackState.items.push(item); // already pushed in submit; guard
   const set = new Map();
   feedbackState.items.forEach(i=>set.set(i.id, i));
   feedbackState.items = [...set.values()];
@@ -3572,52 +3724,414 @@ function drawBarChart(){
 }
 
 /* =====================================================================
-   CV: skills cloud, print, ATS, download
+   RESUME CENTER: data, style builders, downloads, cover letter
 ===================================================================== */
+const RESUME_DATA = {
+  name: 'Nitin Goswami',
+  title: 'AI Developer · Web Developer · UI Designer · Content Strategist',
+  email: 'nitin.goswami.office@gmail.com',
+  phone: '+91 98XXX XXXXX',
+  address: 'Noida, Uttar Pradesh, India',
+  linkedin: 'https://www.linkedin.com/in/nitin-goswami-7a229326b/',
+  github: 'https://github.com/NitinGo17',
+  website: 'https://knowme.co.in',
+  summary: 'Multi-disciplinary builder working at the intersection of AI, web, design and content. Currently pursuing BCA at Asian School of Business, Noida, while interning at Indian Printer & Publisher. Over 5+ years of experience shipping content, design, and code across industries. Combines content strategy intuition with engineering execution — thinks like a marketer, designs like a product person, and ships like a developer.',
+  experience: [
+    { date:'May 2026 — Present', role:'Production Intern', org:'Indian Printer & Publisher', desc:'Website development, WordPress, EDM design, magazine design, social media creatives. Rebuilt the exhibition platform with a responsive WordPress theme and hand-coded email campaigns.' },
+    { date:'2021 — Present', role:'Freelance Content Strategist & Writer', org:'Self-employed · Multi-industry', desc:'Technical blogs, SEO articles, website content, landing pages, LinkedIn, Instagram, Reels & YouTube scripts, product descriptions, marketing copy, news articles, transcription, content strategy.' }
+  ],
+  education: [
+    { date:'2024 — 2027', role:'Bachelor of Computer Applications (BCA)', org:'Asian School of Business, Noida', desc:'Coursework: Data Structures, DBMS, Web Technologies, OOP, Software Engineering.' }
+  ],
+  skills: [
+    { cat:'Languages', items:'HTML, CSS, JavaScript, Python, C#, C++' },
+    { cat:'Frontend', items:'Tailwind CSS, GSAP, Three.js, Responsive Design' },
+    { cat:'Backend', items:'Firebase, Firestore, Auth' },
+    { cat:'AI', items:'Gemini API, Prompt Engineering, AI Automation, AI Agents' },
+    { cat:'Design', items:'Affinity Designer, Canva, Figma' },
+    { cat:'Tools', items:'Git, GitHub, VS Code, WordPress' }
+  ],
+  achievements: [
+    { title:'2nd Rank', sub:'Delhi University Hackathon' },
+    { title:'Top 10', sub:'Technofusion 1.0' },
+    { title:'Participant', sub:'Ideathon 7.0' },
+    { title:'Participant', sub:'ASBIC 2024' },
+    { title:'Participant', sub:'CaseCraft 1.0' },
+    { title:'Participant', sub:'Budget Conclave' }
+  ],
+  projects: [
+    { name:'MindShift', desc:'AI-powered productivity platform with Gemini-powered reflection layer and flexible task graph.' },
+    { name:'GramSetu', desc:'Government scheme discovery platform with eligibility detection and multilingual support.' },
+    { name:'SmartReport', desc:'Healthcare platform for rural medical centers with offline-first patient record management.' },
+    { name:'KnowMe', desc:'Interactive portfolio built as a single HTML file with Three.js, GSAP, and Firebase.' },
+    { name:'IPP Event Management', desc:'Responsive WordPress event platform for Indian Printer & Publisher exhibition.' }
+  ]
+};
+
+let resumeChoices = { style:'minimal', masked:false, format:'pdf' };
+
 function initCV(){
   if(!initFlags.cv){
     initFlags.cv = true;
-    renderCVSkills();
-    $('#cv-download').addEventListener('click', downloadCV);
-    $('#cv-print').addEventListener('click', togglePrintMode);
-    $('#cv-ats').addEventListener('click', toggleATSMode);
-    $$('.cv-mode-toggle button').forEach(b=>b.addEventListener('click', e=>{
-      const mode = b.dataset.cvMode;
-      $$('.cv-mode-toggle button').forEach(x=>x.classList.toggle('active', x===b));
-      if(mode==='ats'){ document.body.classList.add('ats-mode'); }
-      else { document.body.classList.remove('ats-mode'); }
-    }));
+    setupResumeCenter();
   }
 }
 
-function renderCVSkills(){
-  const cloud = $('#cv-skills-cloud');
-  if(!cloud) return;
-  cloud.innerHTML = SKILLS.map(s=>`<div class="cv-skill">${s.name}<span class="cv-skill-level">${s.level}</span></div>`).join('');
-  $$('#cv-skills-cloud .cv-skill').forEach((el,i)=>{
-    el.style.animationDelay = (i*.03)+'s';
+function setupResumeCenter(){
+  // choice buttons
+  $$('#resume-style-choices .resume-choice').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      $$('#resume-style-choices .resume-choice').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      resumeChoices.style = b.dataset.style;
+    });
   });
+  $$('#resume-mask-choices .resume-choice').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      $$('#resume-mask-choices .resume-choice').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      resumeChoices.masked = b.dataset.mask === 'true';
+    });
+  });
+  $$('#resume-format-choices .resume-choice').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      $$('#resume-format-choices .resume-choice').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      resumeChoices.format = b.dataset.format;
+    });
+  });
+  // download / preview
+  $('#resume-download-btn').addEventListener('click', downloadResume);
+  $('#resume-preview-btn').addEventListener('click', previewResume);
+  $('#resume-close-preview').addEventListener('click', ()=>{
+    $('#resume-preview-wrap').style.display = 'none';
+  });
+  // cover letter
+  $('#cl-generate-btn').addEventListener('click', generateCoverLetter);
+  $('#cl-download-pdf').addEventListener('click', ()=>downloadCoverLetter('pdf'));
+  $('#cl-download-word').addEventListener('click', ()=>downloadCoverLetter('word'));
 }
 
-function downloadCV(){
+function getMaskedData(){
+  const d = {...RESUME_DATA};
+  if(resumeChoices.masked){
+    d.email = '[Hidden — available on request]';
+    d.phone = '[Hidden — available on request]';
+    d.address = '[Hidden — available on request]';
+  }
+  return d;
+}
+
+/* ---- Resume HTML builders ---- */
+function buildResumeHTML(style, masked){
+  const d = getMaskedData();
+  const contactLine = [d.email, d.phone, d.address].filter(Boolean).join(' · ');
+  const linksLine = `<a href="${d.linkedin}">LinkedIn</a> · <a href="${d.github}">GitHub</a> · <a href="${d.website}">Portfolio</a>`;
+
+  if(style === 'modern'){
+    return buildModernResume(d, contactLine, linksLine, masked);
+  } else if(style === 'classic'){
+    return buildClassicResume(d, contactLine, linksLine, masked);
+  }
+  return buildMinimalResume(d, contactLine, linksLine, masked);
+}
+
+function buildMinimalResume(d, contactLine, linksLine, masked){
+  return `<div class="rdoc rdoc-minimal">
+    <header class="rdoc-header">
+      <h1>${d.name}</h1>
+      <p class="rdoc-title">${d.title}</p>
+      <p class="rdoc-contact">${contactLine}</p>
+      <p class="rdoc-contact">${linksLine}</p>
+    </header>
+    <section class="rdoc-section">
+      <h2>Summary</h2>
+      <p>${d.summary}</p>
+    </section>
+    <section class="rdoc-section">
+      <h2>Experience</h2>
+      ${d.experience.map(e=>`<div class="rdoc-item"><div class="rdoc-item-head"><b>${e.role}</b> · ${e.org}</div><div class="rdoc-item-date">${e.date}</div><p>${e.desc}</p></div>`).join('')}
+    </section>
+    <section class="rdoc-section">
+      <h2>Education</h2>
+      ${d.education.map(e=>`<div class="rdoc-item"><div class="rdoc-item-head"><b>${e.role}</b> · ${e.org}</div><div class="rdoc-item-date">${e.date}</div><p>${e.desc}</p></div>`).join('')}
+    </section>
+    <section class="rdoc-section">
+      <h2>Skills</h2>
+      ${d.skills.map(s=>`<div class="rdoc-skill-row"><b>${s.cat}:</b> ${s.items}</div>`).join('')}
+    </section>
+    <section class="rdoc-section">
+      <h2>Projects</h2>
+      ${d.projects.map(p=>`<div class="rdoc-item"><div class="rdoc-item-head"><b>${p.name}</b></div><p>${p.desc}</p></div>`).join('')}
+    </section>
+    <section class="rdoc-section">
+      <h2>Achievements</h2>
+      ${d.achievements.map(a=>`<div class="rdoc-item"><b>${a.title}</b> — ${a.sub}</div>`).join('')}
+    </section>
+  </div>`;
+}
+
+function buildModernResume(d, contactLine, linksLine, masked){
+  return `<div class="rdoc rdoc-modern">
+    <div class="rdoc-sidebar">
+      <h1>${d.name}</h1>
+      <p class="rdoc-title">${d.title}</p>
+      <div class="rdoc-side-block">
+        <h3>Contact</h3>
+        <p>${d.email}</p>
+        <p>${d.phone}</p>
+        <p>${d.address}</p>
+        <p><a href="${d.linkedin}">LinkedIn</a></p>
+        <p><a href="${d.github}">GitHub</a></p>
+        <p><a href="${d.website}">Portfolio</a></p>
+      </div>
+      <div class="rdoc-side-block">
+        <h3>Skills</h3>
+        ${d.skills.map(s=>`<p><b>${s.cat}</b><br/>${s.items}</p>`).join('')}
+      </div>
+      <div class="rdoc-side-block">
+        <h3>Achievements</h3>
+        ${d.achievements.map(a=>`<p>${a.title} — ${a.sub}</p>`).join('')}
+      </div>
+    </div>
+    <div class="rdoc-main">
+      <section class="rdoc-section"><h2>Summary</h2><p>${d.summary}</p></section>
+      <section class="rdoc-section"><h2>Experience</h2>
+        ${d.experience.map(e=>`<div class="rdoc-item"><div class="rdoc-item-head"><b>${e.role}</b> · ${e.org}</div><div class="rdoc-item-date">${e.date}</div><p>${e.desc}</p></div>`).join('')}
+      </section>
+      <section class="rdoc-section"><h2>Education</h2>
+        ${d.education.map(e=>`<div class="rdoc-item"><div class="rdoc-item-head"><b>${e.role}</b> · ${e.org}</div><div class="rdoc-item-date">${e.date}</div><p>${e.desc}</p></div>`).join('')}
+      </section>
+      <section class="rdoc-section"><h2>Projects</h2>
+        ${d.projects.map(p=>`<div class="rdoc-item"><div class="rdoc-item-head"><b>${p.name}</b></div><p>${p.desc}</p></div>`).join('')}
+      </section>
+    </div>
+  </div>`;
+}
+
+function buildClassicResume(d, contactLine, linksLine, masked){
+  return `<div class="rdoc rdoc-classic">
+    <header class="rdoc-header rdoc-classic-header">
+      <h1>${d.name}</h1>
+      <p class="rdoc-title">${d.title}</p>
+      <p class="rdoc-contact">${contactLine} | ${linksLine}</p>
+    </header>
+    <hr class="rdoc-divider"/>
+    <section class="rdoc-section"><h2 class="rdoc-classic-h2">Professional Summary</h2><p>${d.summary}</p></section>
+    <section class="rdoc-section"><h2 class="rdoc-classic-h2">Professional Experience</h2>
+      ${d.experience.map(e=>`<div class="rdoc-item"><div class="rdoc-item-head">${e.org} — <b>${e.role}</b></div><div class="rdoc-item-date">${e.date}</div><p>${e.desc}</p></div>`).join('')}
+    </section>
+    <section class="rdoc-section"><h2 class="rdoc-classic-h2">Education</h2>
+      ${d.education.map(e=>`<div class="rdoc-item"><div class="rdoc-item-head">${e.org} — <b>${e.role}</b></div><div class="rdoc-item-date">${e.date}</div><p>${e.desc}</p></div>`).join('')}
+    </section>
+    <section class="rdoc-section"><h2 class="rdoc-classic-h2">Technical Skills</h2>
+      ${d.skills.map(s=>`<p><b>${s.cat}:</b> ${s.items}</p>`).join('')}
+    </section>
+    <section class="rdoc-section"><h2 class="rdoc-classic-h2">Key Projects</h2>
+      ${d.projects.map(p=>`<p><b>${p.name}:</b> ${p.desc}</p>`).join('')}
+    </section>
+    <section class="rdoc-section"><h2 class="rdoc-classic-h2">Achievements</h2>
+      <ul>${d.achievements.map(a=>`<li><b>${a.title}</b> — ${a.sub}</li>`).join('')}</ul>
+    </section>
+  </div>`;
+}
+
+function buildResumeCSS(){
+  return `<style>
+    .rdoc{font-family:'Inter','Segoe UI',Arial,sans-serif;color:#111;line-height:1.5;padding:0;font-size:14px}
+    .rdoc *{box-sizing:border-box}
+    .rdoc h1{font-size:26px;margin:0 0 4px;font-weight:700;color:#111}
+    .rdoc h2{font-size:14px;text-transform:uppercase;letter-spacing:.08em;margin:0 0 10px;padding-bottom:4px;border-bottom:2px solid #333;color:#333}
+    .rdoc h3{font-size:12px;text-transform:uppercase;margin:0 0 6px;color:#555}
+    .rdoc-title{font-size:13px;color:#666;margin:0 0 8px}
+    .rdoc-contact{font-size:12px;color:#666;margin:2px 0}
+    .rdoc-contact a,.rdoc-side-block a{color:#2563eb;text-decoration:none}
+    .rdoc-section{margin-bottom:20px}
+    .rdoc-section p{margin:0 0 6px;font-size:13px;color:#333}
+    .rdoc-item{margin-bottom:14px}
+    .rdoc-item-head{font-size:13px;color:#111;margin-bottom:2px}
+    .rdoc-item-date{font-size:11px;color:#888;margin-bottom:4px}
+    .rdoc-skill-row{font-size:13px;margin-bottom:4px}
+    .rdoc-divider{border:none;border-top:1px solid #ccc;margin:12px 0}
+
+    /* Minimal */
+    .rdoc-minimal{max-width:700px;margin:0 auto;padding:40px}
+
+    /* Modern */
+    .rdoc-modern{display:flex;gap:0;max-width:800px;margin:0 auto}
+    .rdoc-modern .rdoc-sidebar{width:35%;background:#f5f6fa;padding:30px 20px}
+    .rdoc-modern .rdoc-sidebar h1{font-size:22px}
+    .rdoc-modern .rdoc-main{flex:1;padding:30px 24px}
+    .rdoc-side-block{margin-bottom:18px}
+    .rdoc-side-block p{font-size:12px;margin-bottom:4px;color:#444}
+
+    /* Classic */
+    .rdoc-classic{max-width:750px;margin:0 auto;padding:40px;font-family:'Georgia','Times New Roman',serif}
+    .rdoc-classic h1{text-align:center;font-family:'Georgia',serif;font-size:24px}
+    .rdoc-classic .rdoc-title{text-align:center}
+    .rdoc-classic .rdoc-contact{text-align:center}
+    .rdoc-classic-h2{font-family:'Georgia',serif;font-size:13px;border-bottom:1px solid #999;text-transform:uppercase}
+    .rdoc-classic ul{padding-left:20px;margin:0}
+    .rdoc-classic li{font-size:13px;margin-bottom:4px}
+
+    @page{margin:1.5cm}
+    @media print{body *{visibility:hidden}.rdoc-print-area,.rdoc-print-area *{visibility:visible}.rdoc-print-area{position:absolute;left:0;top:0;width:100%}}
+  </style>`;
+}
+
+function previewResume(){
+  const html = buildResumeHTML(resumeChoices.style, resumeChoices.masked);
+  $('#resume-preview-content').innerHTML = buildResumeCSS() + html;
+  $('#resume-preview-wrap').style.display = 'block';
+  $('#resume-preview-wrap').scrollIntoView({behavior:'smooth'});
+}
+
+function downloadResume(){
+  const { style, masked, format } = resumeChoices;
+  if(format === 'pdf'){
+    downloadResumePDF(style, masked);
+  } else {
+    downloadResumeWord(style, masked);
+  }
+}
+
+function downloadResumePDF(style, masked){
   toast('Generating PDF...','info');
+  const html = buildResumeHTML(style, masked);
+  const css = buildResumeCSS();
+  const printWin = window.open('', '_blank');
+  if(!printWin){ toast('Popup blocked — please allow popups','error'); return; }
+  printWin.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${RESUME_DATA.name} — Resume</title>${css}</head><body><div class="rdoc-print-area">${html}</div></body></html>`);
+  printWin.document.close();
   setTimeout(()=>{
-    if(!document.body.classList.contains('cv-print')){
-      document.body.classList.add('cv-print');
-    }
-    window.print();
-    setTimeout(()=>document.body.classList.remove('cv-print'), 1000);
-  }, 300);
+    printWin.focus();
+    printWin.print();
+    setTimeout(()=>printWin.close(), 500);
+  }, 400);
 }
 
-function togglePrintMode(){
-  document.body.classList.toggle('cv-print');
-  toast(document.body.classList.contains('cv-print')?'Print mode on — visible sections only':'Print mode off','info');
+function downloadResumeWord(style, masked){
+  toast('Generating Word document...','info');
+  const html = buildResumeHTML(style, masked);
+  const css = buildResumeCSS();
+  // Word can open HTML with proper MIME type
+  const fullHTML = `<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><title>${RESUME_DATA.name} — Resume</title>${css}</head><body>${html}</body></html>`;
+  const blob = new Blob(['\ufeff' + fullHTML], { type:'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Nitin_Goswami_Resume_${style}${masked?'_masked':''}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('Word document downloaded','success');
 }
 
-function toggleATSMode(){
-  document.body.classList.toggle('ats-mode');
-  toast(document.body.classList.contains('ats-mode')?'ATS mode on — high contrast for parsing':'ATS mode off','info');
+/* ---- Cover Letter Generator ---- */
+function generateCoverLetter(){
+  const company = ($('#cl-company').value || '').trim();
+  const position = ($('#cl-position').value || '').trim();
+  const manager = ($('#cl-manager').value || '').trim();
+  const tone = $('#cl-tone').value;
+  const jobDesc = ($('#cl-jobdesc').value || '').trim();
+
+  if(!company || !position){
+    toast('Please enter at least company name and position','warn');
+    return;
+  }
+
+  const d = RESUME_DATA;
+  const today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  const greeting = manager ? `Dear ${manager},` : 'Dear Hiring Manager,';
+
+  let opening, body, closing;
+
+  if(tone === 'enthusiastic'){
+    opening = `I am absolutely thrilled to apply for the ${position} position at ${company}. When I came across this opportunity, I knew immediately that this is exactly the kind of role where I can bring my full self — a rare blend of AI development, web engineering, UI design, and content strategy.`;
+  } else if(tone === 'concise'){
+    opening = `I am writing to apply for the ${position} position at ${company}. With 5+ years of content strategy experience and hands-on work in AI development, web engineering, and design, I am confident I can contribute immediately.`;
+  } else {
+    opening = `I am writing to express my interest in the ${position} position at ${company}. As a multi-disciplinary builder working at the intersection of AI, web, design, and content, I believe my combination of skills aligns well with what you are looking for.`;
+  }
+
+  if(jobDesc){
+    body = `Currently pursuing a Bachelor of Computer Applications at Asian School of Business, Noida, and interning as a Production Intern at Indian Printer & Publisher, I have built and shipped products across AI, GovTech, HealthTech, and web development. My recent work includes MindShift (an AI-powered productivity platform using the Gemini API), GramSetu (a government scheme discovery platform with multilingual support), and SmartReport (an offline-first healthcare records system for rural medical centers).
+
+Based on the job description you provided, I see a strong alignment with my experience. I have worked extensively with the technologies and skills your role requires, and I am comfortable taking ideas from concept to shipped product — designing the interface, building the code, and writing the content that tells the story.`;
+  } else {
+    body = `Currently pursuing a Bachelor of Computer Applications at Asian School of Business, Noida, and interning as a Production Intern at Indian Printer & Publisher, I have built and shipped products across AI, GovTech, HealthTech, and web development. My recent work includes MindShift (an AI-powered productivity platform using the Gemini API), GramSetu (a government scheme discovery platform with multilingual support), and SmartReport (an offline-first healthcare records system for rural medical centers).
+
+What sets me apart is the rare combination of content strategy intuition (5+ years of SEO, copy, and scripts) and engineering execution (Three.js, Firebase, Gemini API, AI agents). I think like a marketer, design like a product person, and ship like a developer. Every project I build ships with a story — and the story is part of the product.`;
+  }
+
+  closing = `I would welcome the opportunity to discuss how my skills and experience can contribute to ${company}. Thank you for your time and consideration — I look forward to hearing from you.`;
+
+  const letterHTML = `
+    <div class="cl-doc">
+      <div class="cl-date">${today}</div>
+      <div class="cl-sender">
+        <b>${d.name}</b><br/>
+        ${d.title}<br/>
+        ${d.email} | ${d.phone}<br/>
+        ${d.address}
+      </div>
+      <div class="cl-recipient">
+        ${manager || 'Hiring Manager'}<br/>
+        ${company}
+      </div>
+      <p>${greeting}</p>
+      <p>${opening}</p>
+      <p>${body}</p>
+      <p>${closing}</p>
+      <p>Sincerely,<br/><b>${d.name}</b></p>
+    </div>`;
+
+  $('#cover-letter-preview-content').innerHTML = letterHTML;
+  $('#cover-letter-preview-wrap').style.display = 'block';
+  $('#cover-letter-preview-wrap').scrollIntoView({behavior:'smooth'});
+  toast('Cover letter generated','success');
+}
+
+function downloadCoverLetter(format){
+  const content = $('#cover-letter-preview-content').innerHTML;
+  if(!content){ toast('Generate a cover letter first','warn'); return; }
+  const css = `<style>
+    .cl-doc{font-family:'Inter','Segoe UI',Arial,sans-serif;font-size:13px;line-height:1.6;color:#111;max-width:650px;margin:0 auto;padding:40px}
+    .cl-date{margin-bottom:20px;color:#666}
+    .cl-sender{margin-bottom:16px}
+    .cl-recipient{margin-bottom:24px}
+    .cl-doc p{margin-bottom:14px}
+    .cl-doc b{font-weight:600}
+    @page{margin:2cm}
+    @media print{body *{visibility:hidden}.cl-print-area,.cl-print-area *{visibility:visible}.cl-print-area{position:absolute;left:0;top:0;width:100%}}
+  </style>`;
+
+  if(format === 'pdf'){
+    toast('Generating PDF...','info');
+    const printWin = window.open('', '_blank');
+    if(!printWin){ toast('Popup blocked — please allow popups','error'); return; }
+    printWin.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Cover Letter — ${RESUME_DATA.name}</title>${css}</head><body><div class="cl-print-area">${content}</div></body></html>`);
+    printWin.document.close();
+    setTimeout(()=>{
+      printWin.focus();
+      printWin.print();
+      setTimeout(()=>printWin.close(), 500);
+    }, 400);
+  } else {
+    toast('Generating Word document...','info');
+    const fullHTML = `<!DOCTYPE html><html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"><title>Cover Letter — ${RESUME_DATA.name}</title>${css}</head><body>${content}</body></html>`;
+    const blob = new Blob(['\ufeff' + fullHTML], { type:'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Nitin_Goswami_Cover_Letter.doc`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('Word document downloaded','success');
+  }
 }
 
 /* =====================================================================
@@ -3852,14 +4366,13 @@ function buildContactOrbit(){
    BLOG: list, post view, editor, Firebase auth + LocalStorage fallback
 ===================================================================== */
 const FB_CONFIG = {
-  // Replace with your own Firebase project to enable cloud blog + auth.
-  // Leave as-is to use the LocalStorage-only fallback (admin login disabled).
-  apiKey: "YOUR_API_KEY",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project",
-  storageBucket: "your-project.appspot.com",
-  messagingSenderId: "0000000000",
-  appId: "1:0000000000:web:0000000000"
+  apiKey: "AIzaSyBdAbQbqnzuK4hK_Fxp2B10G2JUyFkDlwE",
+  authDomain: "ippevent-6403b.firebaseapp.com",
+  projectId: "ippevent-6403b",
+  storageBucket: "ippevent-6403b.firebasestorage.app",
+  messagingSenderId: "879339265908",
+  appId: "1:879339265908:web:b77cb6cb751643701e1621",
+  measurementId: "G-NW1TCR3HT5"
 };
 const FB_ENABLED = FB_CONFIG.apiKey && FB_CONFIG.apiKey !== 'YOUR_API_KEY';
 let fbApp=null, fbAuth=null, fbDb=null, fbUser=null, fbIsAdmin=false;
@@ -3891,6 +4404,9 @@ function setupFirebase(){
     fbApp = firebase.initializeApp(FB_CONFIG);
     fbAuth = firebase.auth();
     fbDb = firebase.firestore();
+    if(firebase.analytics && FB_CONFIG.measurementId){
+      firebase.analytics();
+    }
     fbAuth.onAuthStateChanged(user=>{
       fbUser = user;
       fbIsAdmin = user && user.email === ADMIN_EMAIL;
@@ -4069,10 +4585,10 @@ function renderBlogList(){
     </div>
   `).join('');
   $$('.blog-card').forEach(card=>{
-    card.addEventListener('click', ()=>{
+    card.addEventListener('click', (e)=>{
       const post = blogState.posts.find(p=>p.id===card.dataset.post);
       if(!post) return;
-      if(fbIsAdmin && (event.target.closest('.blog-card-meta')?.textContent.includes('Edit') || !post.published)){
+      if(fbIsAdmin && (e.target.closest('.blog-card-meta')?.textContent.includes('Edit') || !post.published)){
         openEditor(post);
       } else {
         openBlogPost(post);
@@ -4296,17 +4812,20 @@ console.log('%cYou found the console. Nice. Here are some secrets:\n\n  • Try 
 // brand click easter egg
 // Using querySelector to safely grab the container
 const brandElement = document.querySelector('.nav-brand');
+let brandClicks = 0;
 
 brandElement.addEventListener('click', () => {
     brandClicks++;
-    
+
     // Optional: Add a tiny pop animation on click
     const innerMark = document.querySelector('.mark-inner');
-    innerMark.style.transform = 'scale(0.9)';
-    setTimeout(() => innerMark.style.transform = '', 150);
+    if (innerMark) {
+      innerMark.style.transform = 'scale(0.9)';
+      setTimeout(() => innerMark.style.transform = '', 150);
+    }
 
     if (brandClicks === 7) {
-        unlockAchievement('Eagle Eye');
+        unlockAchievement('eagle-eye', '🦅 Eagle Eye', 'Clicked the logo 7 times');
         spawnFloatingEgg();
     }
 });
@@ -4422,38 +4941,32 @@ logoContainer.addEventListener('mouseleave', () => {
     topLogo.style.setProperty('--radius', '0px');
 });
 
-// Your 7-click easter egg logic
-let brandClicks = 0;
-logoContainer.addEventListener('click', () => {
-    brandClicks++;
-    if (brandClicks === 7) {
-        // unlockAchievement('Eagle Eye');
-        // spawnFloatingEgg();
-    }
-});
 // Wait for the page to fully load
   document.addEventListener("DOMContentLoaded", () => {
-    
     const heroImage = document.querySelector('.hero-photo img');
-    
+    if(!heroImage) return;
+    let animationDone = false;
+    // Wait for popIn animation to finish before allowing scroll-based transform
+    heroImage.addEventListener('animationend', () => { animationDone = true; });
+    // Fallback: mark as done after 1.5s in case animationend doesn't fire
+    setTimeout(() => { animationDone = true; }, 1500);
+
     window.addEventListener('scroll', () => {
-      
-      // THE FIX: This removes the CSS animation lock so JS can take control
-      if (heroImage) {
-        heroImage.style.animation = 'none';
-      }
-      
+      if(!animationDone || !heroImage) return;
+      // Remove the CSS animation lock so JS can take control
+      heroImage.style.animation = 'none';
+
       const scrollPosition = window.scrollY;
-      const maxScroll = 400; 
-      
+      const maxScroll = 400;
+
       let scrollFraction = scrollPosition / maxScroll;
-      if (scrollFraction > 1) scrollFraction = 1; 
-      
+      if(scrollFraction > 1) scrollFraction = 1;
+
       const currentScale = 1.35 - (0.35 * scrollFraction);
       const currentTranslate = -35 + (25 * scrollFraction);
-      
+
       heroImage.style.transform = `scale(${currentScale}) translateY(${currentTranslate}%)`;
-    });
+    }, {passive:true});
   });
 
 </script>
