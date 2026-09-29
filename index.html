@@ -3558,6 +3558,7 @@ function submitFeedback(e){
     fbDb.collection('feedback').doc(item.id).set(item).catch(err=>{
       console.warn('Firestore save failed, using local:', err);
       saveFeedbackLocal(item);
+      toast('Saved locally — cloud unavailable','warn');
     });
   } else {
     saveFeedbackLocal(item);
@@ -4411,6 +4412,8 @@ function setupFirebase(){
       fbUser = user;
       fbIsAdmin = user && user.email === ADMIN_EMAIL;
       updateAdminUI();
+      // swap the posts listener now that admin state is known
+      if(initFlags.blog) loadBlogPosts();
       if(fbIsAdmin) toast('Welcome back, Nitin. Editor unlocked.','success');
     });
   } catch(e){
@@ -4418,18 +4421,30 @@ function setupFirebase(){
   }
 }
 
+let blogPostsUnsub = null;
 function loadBlogPosts(){
   if(FB_ENABLED && fbDb){
-    fbDb.collection('posts').orderBy('date','desc').onSnapshot(snap=>{
+    // Firestore rules: anonymous/visitor queries must filter published == true;
+    // the admin account reads the full collection (drafts included).
+    // Re-subscribing on auth state change switches between the two shapes.
+    if(blogPostsUnsub){ try{ blogPostsUnsub(); }catch(e){} blogPostsUnsub = null; }
+    const onSnap = snap=>{
       blogState.posts = snap.docs.map(d=>({id:d.id, ...d.data()}));
+      blogState.posts.sort((a,b)=>(b.date||0)-(a.date||0));
       renderBlogList();
       updateCatCounts();
-    }, err=>{
+    };
+    const onErr = err=>{
       console.warn('Firestore listen failed, falling back:', err);
       loadBlogLocal();
       renderBlogList();
       updateCatCounts();
-    });
+    };
+    if(fbIsAdmin){
+      blogPostsUnsub = fbDb.collection('posts').orderBy('date','desc').onSnapshot(onSnap, onErr);
+    } else {
+      blogPostsUnsub = fbDb.collection('posts').where('published','==',true).onSnapshot(onSnap, onErr);
+    }
   } else {
     loadBlogLocal();
     renderBlogList();

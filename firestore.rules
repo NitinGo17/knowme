@@ -1,0 +1,60 @@
+rules_version = '2';
+
+// Firestore security rules for project ippevent-6403b (knowme.co.in).
+// Source of truth: deploy with `firebase deploy --only firestore:rules`
+// or paste into Firebase console -> Firestore -> Rules.
+// See docs/api/firestore-rules.md for the design rationale and verification steps.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // The single admin account. Client-side `fbIsAdmin` is cosmetic only;
+    // this function is the real security boundary for all writes.
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'nitin.goswami.office@gmail.com';
+    }
+
+    // Blog posts.
+    // - Anyone can read a PUBLISHED post (get) or run a query/list that
+    //   Firestore can prove only touches published posts (list).
+    //   Queries must therefore filter `where('published','==',true)` —
+    //   the client does this for non-admin listeners.
+    // - Drafts are readable only by the admin.
+    // - All writes (create/update/delete) are admin-only.
+    match /posts/{id} {
+      allow get, list: if resource.data.published == true || isAdmin();
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Feedback wall (bottles in the sea).
+    // - Public read.
+    // - Anonymous visitors may CREATE a feedback doc, but only with the
+    //   exact field set the site writes, sane sizes and types. Any payload
+    //   that adds fields, drops required ones or overflows the size caps
+    //   is rejected (spam floor per issue #12).
+    // - Update/delete are admin-only.
+    match /feedback/{id} {
+      allow get, list: if true;
+      allow create: if request.resource.data.keys().hasAll(['id','name','message','ratings','date'])
+        && request.resource.data.keys().hasOnly(['id','name','message','ratings','date'])
+        && request.resource.data.id is string
+        && request.resource.data.id.size() > 0
+        && request.resource.data.id.size() <= 64
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 100
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0
+        && request.resource.data.message.size() <= 2000
+        && request.resource.data.date is number
+        && request.resource.data.ratings is map;
+      allow update, delete: if isAdmin();
+    }
+
+    // Everything else in the project: fully closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
